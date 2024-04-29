@@ -1,12 +1,16 @@
 mod config;
 mod db;
-mod error;
 mod dtos;
-mod models;
-mod utils;
+mod error;
 mod extractors;
+mod models;
+mod scopes;
+mod utils;
 
-use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
+use actix_web::{
+    get, http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder,
+};
 use config::Config;
 use db::DBClient;
 use dotenv::dotenv;
@@ -34,6 +38,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .connect(&config.database_url)
         .await?;
 
+    match sqlx::migrate!("./migrations").run(&pool).await {
+        Ok(_) => println!("Migrations executed successfully."),
+        Err(e) => eprintln!("Error executing migrations: {}", e),
+    };
+
     let db_client = DBClient::new(pool);
     let app_state: AppState = AppState {
         env: config.clone(),
@@ -46,9 +55,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allowed_origin("http://localhost:3000")
+            .allowed_origin("http://localhost:8000")
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_headers(vec![
+                header::CONTENT_TYPE,
+                header::AUTHORIZATION,
+                header::ACCEPT,
+            ])
+            .supports_credentials();
+
         App::new()
             .app_data(web::Data::new(app_state.clone()))
+            .wrap(cors)
             .wrap(Logger::default())
+            .service(scopes::auth::auth_scope())
+            .service(scopes::users::users_scope())
             .service(health_checker_handler)
     })
     .bind(("0.0.0.0", config.port))?
@@ -60,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[get("/api/healthchecker")]
 async fn health_checker_handler() -> impl Responder {
-    const MESSAGE: &str = "REST API in Rust";
+    const MESSAGE: &str = "Complete Restful API in Rust";
 
     HttpResponse::Ok().json(serde_json::json!({"status": "success", "message": MESSAGE}))
 }
