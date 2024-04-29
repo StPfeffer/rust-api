@@ -6,7 +6,7 @@ This is a simple API written in Rust.
 
 ### Start the container
 
-Launching the [PostgresSQL](https://www.postgresql.org/) container:
+Launching the [PostgreSQL](https://www.postgresql.org/) container:
 
 `docker-compose -f docker-compose.no_api.yml up -d`
 
