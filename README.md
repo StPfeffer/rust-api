@@ -13,3 +13,13 @@ Launching the [PostgresSQL](https://www.postgresql.org/) container:
 ### Disable the container
 
 `docker-compose -f docker-compose.no_api.yml down`
+
+## Migrations
+
+Generate reversible migration scripts containing both "up" and "down" SQL files:
+
+`sqlx migrate add -r "description"`
+
+To syncronize the database schema with out migration scripts, execute:
+
+`sqlx migrate run`
