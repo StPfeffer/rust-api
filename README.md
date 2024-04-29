@@ -20,6 +20,6 @@ Generate reversible migration scripts containing both "up" and "down" SQL files:
 
 `sqlx migrate add -r "description"`
 
-To syncronize the database schema with out migration scripts, execute:
+To syncronize the database schema with the migration scripts in "/migrations", execute:
 
 `sqlx migrate run`
