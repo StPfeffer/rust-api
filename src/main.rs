@@ -83,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[get("/api/healthchecker")]
 async fn health_checker_handler() -> impl Responder {
-    const MESSAGE: &str = "Complete Restful API in Rust";
+    const MESSAGE: &str = "Simple Rust API";
 
     HttpResponse::Ok().json(serde_json::json!({"status": "success", "message": MESSAGE}))
 }
