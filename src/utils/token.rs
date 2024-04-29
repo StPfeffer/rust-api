@@ -36,7 +36,7 @@ pub fn create_token(
     )
 }
 
-pub fn decode_token<T: Into<String>>(token: T, secret: &[i8]) -> Result<String, HttpError> {
+pub fn decode_token<T: Into<String>>(token: T, secret: &[u8]) -> Result<String, HttpError> {
     let decoded = decode::<TokenClaims>(
         &token.into(),
         &DecodingKey::from_secret(secret),
