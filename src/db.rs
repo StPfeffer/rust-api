@@ -53,15 +53,15 @@ impl UserExt for DBClient {
         let mut user: Option<User> = None;
 
         if let Some(user_id) = user_id {
-            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole" FROM users WHERE id = $1"#, user_id)
+            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole" FROM users WHERE id = $1"#, user_id)
                 .fetch_optional(&self.pool)
                 .await?;
         } else if let Some(name) = name {
-            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole" FROM users WHERE name = $1"#, name)
+            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole" FROM users WHERE name = $1"#, name)
                 .fetch_optional(&self.pool)
                 .await?;
         } else if let Some(email) = email {
-            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole" FROM users WHERE email = $1"#, email)
+            user = sqlx::query_as!(User, r#"SELECT id,name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole" FROM users WHERE email = $1"#, email)
                 .fetch_optional(&self.pool)
                 .await?;
         }
@@ -74,8 +74,7 @@ impl UserExt for DBClient {
 
         let users = sqlx::query_as!(
             User,
-            r#"SELECT id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole" FROM users
-            LIMIT $1 OFFSET $2"#,
+            r#"SELECT id,name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole" FROM users LIMIT $1 OFFSET $2"#,
             limit as i64,
             offset as i64
         )
@@ -93,7 +92,7 @@ impl UserExt for DBClient {
     ) -> Result<User, sqlx::Error> {
         let user = sqlx::query_as!(
             User,
-            r#"INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole""#,
+            r#"INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole""#,
             name.into(),
             email.into(),
             password.into()
@@ -112,7 +111,7 @@ impl UserExt for DBClient {
     ) -> Result<User, sqlx::Error> {
         let user = sqlx::query_as!(
             User,
-            r#"INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id,name, email, password, photo,verified,created_at,updated_at,role as "role: UserRole""#,
+            r#"INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, password, photo, verified, created_at, updated_at, role as "role: UserRole""#,
             name.into(),
             email.into(),
             password.into(),
