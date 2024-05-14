@@ -17,11 +17,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - rust_app_no_api_network
 
 volumes:
   postgres:
-
-networks:
-  rust_app_no_api_network:
